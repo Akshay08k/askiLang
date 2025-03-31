@@ -10,7 +10,8 @@ enum class TokenType
     close_paran,
     ident,
     let,
-    eq
+    eq,
+    plus
 };
 struct Token
 {
@@ -95,6 +96,12 @@ public:
                 tokens.push_back({.type = TokenType::eq});
                 continue;
             }
+            else if (peek().value() == '+')
+            {
+                consume();
+                tokens.push_back({.type = TokenType::plus});
+                continue;
+            }
             else
             {
                 std::cerr << "You messed up! Unexpected character: '" << peek().value() << "'" << std::endl;
@@ -121,6 +128,7 @@ private:
     {
         return m_src.at(m_index++);
     }
+
     const std::string m_src;
     size_t m_index = 0;
 };
