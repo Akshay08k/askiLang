@@ -20,16 +20,15 @@ struct NodeBinExprAdd
     NodeExpr *rhs;
 };
 
-// struct NodeBinExprMulti
-// {
-//     NodeExpr *lhs;
-//     NodeExpr *rhs;
-// };
+struct NodeBinExprMulti
+{
+    NodeExpr *lhs;
+    NodeExpr *rhs;
+};
 
 struct NodeBinExpr
 {
-    // std::variant<NodeBinExprAdd *, NodeBinExprMulti *> var;
-    NodeBinExprAdd *var;
+    std::variant<NodeBinExprAdd *, NodeBinExprMulti *> var;
 };
 
 struct NodeTerm
@@ -111,6 +110,31 @@ public:
                     {
                         bin_expr_add->rhs = rhs.value();
                         bin_expr->var = bin_expr_add;
+                        auto expr = m_allocator.alloc<NodeExpr>();
+                        expr->var = bin_expr;
+                        return expr;
+                    }
+                    else
+                    {
+                        std::cerr << "Expected Expression" << std::endl;
+                        exit(EXIT_FAILURE);
+                    }
+                }
+            }
+            else if (try_consume(TokenType::multi).has_value())
+            {
+                auto bin_expr = m_allocator.alloc<NodeBinExpr>();
+                {
+                    auto bin_expr_multi = m_allocator.alloc<NodeBinExprMulti>();
+
+                    auto lhs_expr = m_allocator.alloc<NodeExpr>();
+                    lhs_expr->var = term.value();
+                    bin_expr_multi->lhs = lhs_expr;
+
+                    if (auto rhs = parse_expr())
+                    {
+                        bin_expr_multi->rhs = rhs.value();
+                        bin_expr->var = bin_expr_multi;
                         auto expr = m_allocator.alloc<NodeExpr>();
                         expr->var = bin_expr;
                         return expr;
@@ -228,7 +252,7 @@ private:
         }
     }
 
-    inline Token try_consume(TokenType type, std::string &err_msg)
+    inline Token try_consume(TokenType type, std::string err_msg)
     {
         if (peek().has_value() && peek().value().type == type)
         {

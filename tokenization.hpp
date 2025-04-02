@@ -11,7 +11,8 @@ enum class TokenType
     ident,
     let,
     eq,
-    plus
+    plus,
+    multi
 };
 struct Token
 {
@@ -100,6 +101,12 @@ public:
             {
                 consume();
                 tokens.push_back({.type = TokenType::plus});
+                continue;
+            }
+            else if (peek().value() == '*')
+            {
+                consume();
+                tokens.push_back({.type = TokenType::multi});
                 continue;
             }
             else

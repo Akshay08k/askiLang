@@ -1,5 +1,4 @@
-let x = 17;
-let y = 62 + 3;
-exit(y);
-
-
+let a = 10;
+let b = 20;
+let sum = a*b;
+exit(sum);

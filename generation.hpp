@@ -59,7 +59,6 @@ public:
             //          std::cerr << "Identifier " << expr_ident->ident.value.value() << " does not exist" << std::endl;
             //          exit(EXIT_FAILURE);
             //      }
-
             //     const auto &var = gen->m_vars.at(expr_ident->ident.value.value());
             //     std::stringstream offset;
             //     offset << "QWORD [rsp + " << (gen->m_stack_size - var.stack_loc - 1) * 8 << "]\n";
@@ -72,13 +71,20 @@ public:
             }
             void operator()(const NodeBinExpr *bin_expr) const
             {
-                gen->gen_expr(bin_expr->var->lhs);
-                gen->gen_expr(bin_expr->var->rhs);
-                gen->pop("rax");
-                gen->pop("rbx");
-                gen->m_output<<"    add rax, rbx\n";
-                gen->push("rax");
-                
+                std::visit([this, bin_expr](auto &&expr)
+                           {
+                    gen->gen_expr(expr->lhs);
+                    gen->gen_expr(expr->rhs);
+                    gen->pop("rax");
+                    gen->pop("rbx");
+            
+                    if constexpr (std::is_same_v<std::decay_t<decltype(expr)>, NodeBinExprAdd*>) {
+                        gen->m_output << "    add rax, rbx\n";
+                    } else if constexpr (std::is_same_v<std::decay_t<decltype(expr)>, NodeBinExprMulti*>) {
+                        gen->m_output << "    imul rax, rbx\n";
+                    }
+            
+                    gen->push("rax"); }, bin_expr->var);
             }
         };
         ExprVisitor visitor{.gen = this};
