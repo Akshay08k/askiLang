@@ -1,5 +1,2 @@
-let x = 17;
-let y = 62 + 3;
-exit(y);
-
-
+let x = 10 + (2 * 3) - 1;
+exit(x);

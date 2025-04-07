@@ -11,8 +11,26 @@ enum class TokenType
     ident,
     let,
     eq,
-    plus
+    plus,
+    star, // multiplication
+    sub,
+    div
 };
+
+std::optional<int> binExpr_prec(TokenType type)
+{
+    switch (type)
+    {
+    case TokenType::star:
+    case TokenType::div:
+        return 1;
+    case TokenType::plus:
+    case TokenType::sub:
+        return 0;
+    default:
+        return {};
+    }
+}
 struct Token
 {
     TokenType type;
@@ -31,6 +49,9 @@ public:
         std::string buf;
         while (peek().has_value())
         {
+            // cant able to use switch statement here
+            // because switch requires constant expression to be
+            // evaluated
             if (std::isalpha(peek().value()))
             {
                 buf.push_back(consume());
@@ -42,20 +63,17 @@ public:
                 {
                     tokens.push_back({.type = TokenType::exit});
                     buf.clear();
-                    continue;
                 }
                 else if (buf == "let")
                 {
                     tokens.push_back({.type = TokenType::let});
                     buf.clear();
-                    continue;
                 }
 
                 else
                 {
                     tokens.push_back({.type = TokenType::ident, .value = buf});
                     buf.clear();
-                    continue;
                 }
             }
             else if (std::isdigit(peek().value()))
@@ -67,7 +85,6 @@ public:
                 }
                 tokens.push_back({.type = TokenType::int_lit, .value = buf});
                 buf.clear();
-                continue;
             }
             else if (peek().value() == '(')
             {
@@ -83,24 +100,35 @@ public:
             {
                 consume();
                 tokens.push_back({.type = TokenType::semi});
-                continue;
             }
             else if (std::isspace(peek().value()))
             {
                 consume();
-                continue;
             }
             else if (peek().value() == '=')
             {
                 consume();
                 tokens.push_back({.type = TokenType::eq});
-                continue;
             }
             else if (peek().value() == '+')
             {
                 consume();
                 tokens.push_back({.type = TokenType::plus});
-                continue;
+            }
+            else if (peek().value() == '*')
+            {
+                consume();
+                tokens.push_back({.type = TokenType::star});
+            }
+            else if (peek().value() == '-')
+            {
+                consume();
+                tokens.push_back({.type = TokenType::sub});
+            }
+            else if (peek().value() == '/')
+            {
+                consume();
+                tokens.push_back({.type = TokenType::div});
             }
             else
             {
