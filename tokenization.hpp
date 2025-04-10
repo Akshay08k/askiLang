@@ -13,8 +13,11 @@ enum class TokenType
     eq,
     plus,
     star, // multiplication
-    sub,
-    div
+    minus,
+    fslash,
+    open_curly,
+    close_curly,
+    if_
 };
 
 std::optional<int> binExpr_prec(TokenType type)
@@ -22,10 +25,10 @@ std::optional<int> binExpr_prec(TokenType type)
     switch (type)
     {
     case TokenType::star:
-    case TokenType::div:
+    case TokenType::fslash:
         return 1;
     case TokenType::plus:
-    case TokenType::sub:
+    case TokenType::minus:
         return 0;
     default:
         return {};
@@ -43,6 +46,9 @@ public:
         : m_src(std::move(src))
     {
     }
+
+    // Tokenize function which is used convert the code into tokenize and
+    // Extract the tokens from it
     inline std::vector<Token> tokenize()
     {
         std::vector<Token> tokens;
@@ -69,7 +75,12 @@ public:
                     tokens.push_back({.type = TokenType::let});
                     buf.clear();
                 }
-
+                else if (buf == "if")
+                {
+                    tokens.push_back({.type = TokenType::if_});
+                    buf.clear();
+                }
+                // ident can be any so dont want to apply if else
                 else
                 {
                     tokens.push_back({.type = TokenType::ident, .value = buf});
@@ -123,12 +134,22 @@ public:
             else if (peek().value() == '-')
             {
                 consume();
-                tokens.push_back({.type = TokenType::sub});
+                tokens.push_back({.type = TokenType::minus});
             }
             else if (peek().value() == '/')
             {
                 consume();
-                tokens.push_back({.type = TokenType::div});
+                tokens.push_back({.type = TokenType::fslash});
+            }
+            else if (peek().value() == '{')
+            {
+                consume();
+                tokens.push_back({.type = TokenType::open_curly});
+            }
+            else if (peek().value() == '}')
+            {
+                consume();
+                tokens.push_back({.type = TokenType::close_curly});
             }
             else
             {

@@ -1,3 +1,4 @@
+// Pragma once to prevent multiple inclusions
 #pragma once
 
 class ArenaAllocator

@@ -54,7 +54,8 @@
     "text_encoding": "cpp",
     "typeinfo": "cpp",
     "variant": "cpp",
-    "cassert": "cpp"
+    "cassert": "cpp",
+    "map": "cpp"
   },
   "C_Cpp.errorSquiggles": "disabled"
 }
