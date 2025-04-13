@@ -173,6 +173,7 @@ public:
                 gen.m_vars.push_back({.name = stmt_let->ident.value.value(), .stack_loc = gen.m_stack_size});
                 gen.gen_expr(stmt_let->expr);
             }
+            
             // scope statements
             void operator()(const NodeScope *scope) const
             {
@@ -254,7 +255,7 @@ private:
     // this is struct that holds the location of the variable
     // in future we will do add a types of this variable
     // so we can do type checking
-    struct Var
+    struct Varr
     {
         std::string name;
         size_t stack_loc;

@@ -1,14 +1,8 @@
-let x = 2;
-if(x - 1){
-    exit(69);
+let x = 0;
+let y = 2+2-(3*5)+65;
+let z = x+y;
+if(z - 1){
+    exit(z);
 }
-exit(1);
+exit(0);
 
-
-if value is positive than the if block executes and if 
-its zero or negative than the scope statements ignores
-
-reassign variable remaining 
-printing is remaining
-else is remaining
-negative values is remaining
