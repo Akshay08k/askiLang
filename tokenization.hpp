@@ -1,6 +1,7 @@
 #pragma once
 #include <string>
 #include <vector>
+#include <optional>
 enum class TokenType
 {
     exit,
@@ -12,7 +13,7 @@ enum class TokenType
     let,
     eq,
     plus,
-    star, // multiplication
+    star,
     minus,
     fslash,
     open_curly,

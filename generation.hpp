@@ -1,6 +1,8 @@
 #pragma once
+
 #include "./parser.hpp"
 #include <cassert>
+
 #include <algorithm>
 class Generator
 {
@@ -165,6 +167,9 @@ public:
                     [&](const Var &var)
                     { return var.name == stmt_let->ident.value.value(); });
 
+                // if the variable is not in the vector(MAP)
+                // than and only create it
+                // otherwise exit with error
                 if (it != gen.m_vars.cend())
                 {
                     std::cerr << "Identifier " << stmt_let->ident.value.value() << " already exists" << std::endl;
@@ -173,7 +178,7 @@ public:
                 gen.m_vars.push_back({.name = stmt_let->ident.value.value(), .stack_loc = gen.m_stack_size});
                 gen.gen_expr(stmt_let->expr);
             }
-            
+
             // scope statements
             void operator()(const NodeScope *scope) const
             {
@@ -196,6 +201,7 @@ public:
         std::visit(visitor, stmt->var);
     }
 
+    // Main Proggram generation template
     [[nodiscard]] std::string
     gen_prog()
     {
@@ -215,12 +221,18 @@ public:
     }
 
 private:
+    // Pushing to the stack
+    // and incrementing the stack size
+    // taking the register name as an argument
     void push(const std::string &reg)
     {
         m_output << "    push " << reg << "\n";
         m_stack_size++;
     }
 
+    // Popping from the stack
+    // and decrementing the stack size
+    // taking the register name as an argument
     void pop(const std::string &reg)
     {
         m_output << "    pop " << reg << "\n";
@@ -245,6 +257,8 @@ private:
         m_scopes.pop_back();
     }
 
+    // label is used to create unique labels in assembly
+    // it mainly used for if statements
     std::string create_label()
     {
         std::stringstream ss;
@@ -255,7 +269,7 @@ private:
     // this is struct that holds the location of the variable
     // in future we will do add a types of this variable
     // so we can do type checking
-    struct Varr
+    struct Var
     {
         std::string name;
         size_t stack_loc;
@@ -264,7 +278,9 @@ private:
     const NodeProg m_prog;
     std::stringstream m_output;
     size_t m_stack_size = 0;
+    // vector(MAP) of variables
     std::vector<Var> m_vars{};
+    // vector(STACK) of scopes
     std::vector<size_t> m_scopes{};
     int m_label_count = 0;
 };

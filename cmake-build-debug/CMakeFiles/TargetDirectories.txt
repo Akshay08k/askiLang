@@ -1,0 +1,3 @@
+D:/AskiLang/cmake-build-debug/CMakeFiles/AskiLang.dir
+D:/AskiLang/cmake-build-debug/CMakeFiles/edit_cache.dir
+D:/AskiLang/cmake-build-debug/CMakeFiles/rebuild_cache.dir
