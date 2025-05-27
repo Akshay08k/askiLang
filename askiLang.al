@@ -8,10 +8,11 @@ let z = x+y;
 
 if(x - 1){
     exit(12);
+}elif(0){
+    exit(23);
+}else{
+    exit(45);
 }
-exit(5);
-/*
-exit(10);
 
 
 
