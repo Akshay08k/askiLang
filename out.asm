@@ -1,6 +1,6 @@
 global _start
 _start:
-    mov rax,0
+    mov rax,1
     push rax
     mov rax,65
     push rax
@@ -38,17 +38,23 @@ _start:
     push rax
     mov rax,1
     push rax
+    push QWORD [rsp + 24]
+
+    pop rax
+    pop rbx
+    sub rax, rbx
+    push rax
     pop rax
     test rax,rax
     jz label0
-    push QWORD [rsp + 0]
-
+    mov rax,12
+    push rax
     mov rax, 60
     pop rdi
     syscall
     add rsp, 0
 label0:
-    mov rax,100
+    mov rax,5
     push rax
     mov rax, 60
     pop rdi

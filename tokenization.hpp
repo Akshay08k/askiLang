@@ -21,7 +21,7 @@ enum class TokenType
     if_
 };
 
-inline std::optional<int> binExpr_prec(TokenType type)
+inline std::optional<int> binExpr_prec(const TokenType type)
 {
     switch (type)
     {
@@ -100,6 +100,29 @@ public:
                 tokens.push_back({.type = TokenType::int_lit, .value = buf});
                 buf.clear();
             }
+            else if (peek().value() == '/' && peek(1).has_value() && peek(1).value() == '/') {
+                consume();
+                consume();
+                while (peek().has_value() && peek(1).value() != '\n') {
+                    consume();
+                }
+            }
+            else if (peek().value() == '/' && peek(1).has_value() && peek(1).value() == '*') {
+                consume();
+                consume();
+                while (peek().has_value() ) {
+                    if ( peek().value() == '*' && peek(1).has_value() && peek(1).value() == '/') {
+                        break;
+                    }
+                    consume();
+                }
+                if (peek().has_value()) {
+                    consume();
+                }
+                if (peek().has_value()) {
+                    consume();
+                }
+            }
             else if (peek().value() == '(')
             {
                 consume();
@@ -165,7 +188,7 @@ public:
     }
 
 private:
-    [[nodiscard]] inline std::optional<char> peek(int offset = 0) const
+    [[nodiscard]] inline std::optional<char> peek(const int offset = 0) const
     {
         if (m_index + offset >= m_src.length())
         {

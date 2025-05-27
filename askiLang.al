@@ -1,12 +1,18 @@
-let x = 0;
+let x = 1;
 let y = 2+2-(3*5)+65;
-
 let z = x+y;
 
-if(1){
-    exit(z);
+
+//first comment
+
+
+if(x - 1){
+    exit(12);
 }
-exit(100);
+exit(5);
+/*
+exit(10);
+
 
 
 

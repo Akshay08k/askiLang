@@ -101,28 +101,6 @@ public:
         struct ExprVisitor
         {
             Generator &gen;
-            // No Longer needed as we are using the NodeTerm
-
-            //  void operator()(const NodeExprIntLit *expr_int_lit) const
-            //  {
-            //      gen->m_output << "    mov rax," << expr_int_lit->int_lit.value.value() << "\n";
-            //      gen->push("rax");
-            //  };
-            //  void operator()(const NodeExprIdent *expr_ident) const
-            //  {
-            //      // first check if the variable is in the map
-            //      if (!gen->m_vars.contains(expr_ident->ident.value.value()))
-            //      {
-            //          std::err << "Identifier " << expr_ident->ident.value.value() << " does not exist" << std::end;
-            //          exit(EXIT_FAILURE);
-            //      }
-
-            //     const auto &var = gen->m_vars.at(expr_ident->ident.value.value());
-            //     std::string stream offset;
-            //     offset << "QWORD [rsp + " << (gen->m_stack_size - var.stack_loc - 1) * 8 << "]\n";
-            //     gen->push(offset.str());
-            // }
-
             void operator()(const NodeTerm *term) const
             {
                 gen.gen_term(term);
