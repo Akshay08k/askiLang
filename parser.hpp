@@ -4,6 +4,7 @@
 #include <algorithm>
 #include "./tokenization.hpp"
 #include "./arena.hpp"
+
 struct NodeTermIntLit
 {
     Token int_lit;
@@ -46,16 +47,16 @@ struct NodeBinExprDiv
 
 struct NodeBinExpr
 {
-    std::variant<NodeBinExprAdd *, NodeBinExprMulti *, NodeBinExprSub *, NodeBinExprDiv *> var;
+    std::variant<NodeBinExprAdd *, NodeBinExprMulti *, NodeBinExprSub *, NodeBinExprDiv *> var{};
 };
 
 struct NodeTerm
 {
-    std::variant<NodeTermIntLit *, NodeTermIdent *, NodeTermParen *> var;
+    std::variant<NodeTermIntLit *, NodeTermIdent *, NodeTermParen *> var{};
 };
 struct NodeExpr
 {
-    std::variant<NodeTerm *, NodeBinExpr *> var;
+    std::variant<NodeTerm *, NodeBinExpr *> var{};
 };
 struct NodeStmtExit
 {
@@ -65,7 +66,7 @@ struct NodeStmtExit
 struct NodeStmtLet
 {
     Token ident;
-    NodeExpr *expr;
+    NodeExpr *expr{};
 };
 
 struct NodeStmt;
@@ -83,7 +84,7 @@ struct NodeStmtIf
 
 struct NodeStmt
 {
-    std::variant<NodeStmtExit *, NodeStmtLet *, NodeScope *, NodeStmtIf *> var;
+    std::variant<NodeStmtExit *, NodeStmtLet *, NodeScope *, NodeStmtIf *> var{};
 };
 
 struct NodeProg
@@ -94,7 +95,7 @@ struct NodeProg
 class Parser
 {
 public:
-    inline explicit Parser(std::vector<Token> tokens)
+    explicit Parser(std::vector<Token> tokens)
         : m_tokens(std::move(tokens)),
           m_allocator(1024 * 1024 * 4)
     {
@@ -111,7 +112,7 @@ public:
             return term;
         }
 
-        else if (auto ident = try_consume(TokenType::ident))
+        if (auto ident = try_consume(TokenType::ident))
         {
             auto term_ident = m_allocator.alloc<NodeTermIdent>();
             term_ident->ident = ident.value();
@@ -119,7 +120,7 @@ public:
             term->var = term_ident;
             return term;
         }
-        else if (auto open_paren = try_consume(TokenType::open_paran))
+        if (auto open_paren = try_consume(TokenType::open_paran))
         {
             auto expr = parse_expr();
             if (!expr.has_value())
@@ -127,17 +128,15 @@ public:
                 std::cerr << "Expected Expression" << std::endl;
                 exit(EXIT_FAILURE);
             }
-            try_consume(TokenType::close_paran, "Expected closing paranthesis");
+            try_consume(TokenType::close_paran, "Expected closing parenthesis");
             auto term_paren = m_allocator.alloc<NodeTermParen>();
             term_paren->expr = expr.value();
             auto term = m_allocator.alloc<NodeTerm>();
             term->var = term_paren;
             return term;
         }
-        else
-        {
-            return {};
-        }
+
+        return {};
     }
 
     // Parsing according to precedence in order
@@ -173,7 +172,7 @@ public:
             {
                 break;
             }
-            Token op = consume();
+            const Token op = consume();
             int next_min_prec = prec.value() + 1;
             auto expr_rhs = parse_expr(next_min_prec);
             if (!expr_rhs.has_value())
@@ -183,7 +182,7 @@ public:
             }
 
             auto expr = m_allocator.alloc<NodeBinExpr>();
-            auto expr_lhs2 = m_allocator.alloc<NodeExpr>();
+            const auto expr_lhs2 = m_allocator.alloc<NodeExpr>();
 
             // expr_lhs->var = term_lhs.value();
 
@@ -228,43 +227,6 @@ public:
         }
         return expr_lhs;
     }
-    // if (auto term = parse_term())
-    // {
-    //     if (try_consume(TokenType::plus).has_value())
-    //     {
-    //         auto bin_expr = m_allocator.alloc<NodeBinExpr>();
-    //         {
-    //             auto bin_expr_add = m_allocator.alloc<NodeBinExprAdd>();
-
-    //                               bin_expr_add->lhs = lhs_expr;
-
-    //             if (auto rhs = parse_expr())
-    //             {
-    //                 bin_expr_add->rhs = rhs.value();
-    //                 bin_expr->var = bin_expr_add;
-    //                 auto expr = m_allocator.alloc<NodeExpr>();
-    //                 expr->var = bin_expr;
-    //                 return expr;
-    //             }
-    //             else
-    //             {
-    //                 std::cerr << "Expected Expression" << std::endl;
-    //                 exit(EXIT_FAILURE);
-    //             }
-    //         }
-    //     }
-    //     else
-    //     {
-    //         auto expr = m_allocator.alloc<NodeExpr>();
-    //         expr->var = term.value();
-    //         return expr;
-    //     }
-    // }
-    // else
-    // {
-    //     return {};
-    // }
-
     std::optional<NodeScope *> parse_scope()
     {
         if (!try_consume(TokenType::open_curly).has_value())
@@ -371,7 +333,7 @@ public:
         }
     }
 
-    std::optional<NodeProg> parseProg()
+     std::optional<NodeProg> parseProg()
     {
         NodeProg prog;
         while (peek().has_value())
@@ -390,7 +352,7 @@ public:
     }
 
 private:
-    [[nodiscard]] inline std::optional<Token> peek(int offset = 0) const
+    [[nodiscard]] std::optional<Token> peek(const int offset = 0) const
     {
         if (m_index + offset >= m_tokens.size())
         {
@@ -401,12 +363,12 @@ private:
             return m_tokens.at(m_index + offset);
         }
     }
-    inline Token consume()
+    Token consume()
     {
         return m_tokens.at(m_index++);
     }
 
-    inline std::optional<Token> try_consume(TokenType type)
+    std::optional<Token> try_consume(TokenType type)
     {
         if (peek().has_value() && peek().value().type == type)
         {
@@ -418,7 +380,7 @@ private:
         }
     }
 
-    inline Token try_consume(TokenType type, std::string err_msg)
+    Token try_consume(TokenType type, const std::string &err_msg)
     {
         if (peek().has_value() && peek().value().type == type)
         {

@@ -1,9 +1,9 @@
 #include <fstream>
 #include <iostream>
-#include <optional>
 #include <sstream>
 #include <vector>
 #include "./generation.hpp"
+
 // Taking Cmd Args Of Custom Lang File
 int main(int argc, char *argv[])
 {
@@ -31,7 +31,7 @@ int main(int argc, char *argv[])
     Parser parser(std::move(tokens));
     std::optional<NodeProg> Prog = parser.parseProg();
 
-    // if Program is valid than only go ahead
+    // if Program is valider than only go ahead
     // or else throw error
     if (!Prog.has_value())
     {

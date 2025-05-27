@@ -4,7 +4,7 @@
 class ArenaAllocator
 {
 public:
-    inline explicit ArenaAllocator(size_t bytes) : m_size(bytes)
+    inline explicit ArenaAllocator(const size_t bytes) : m_size(bytes)
     {
         m_buffer = static_cast<std::byte *>(malloc(m_size));
         m_offset = m_buffer;
@@ -29,6 +29,6 @@ public:
 
 private:
     size_t m_size;
-    std::byte *m_buffer;
-    std::byte *m_offset;
+    std::byte *m_buffer{};
+    std::byte *m_offset{};
 };

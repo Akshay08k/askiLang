@@ -113,12 +113,12 @@ public:
             //      // first check if the variable is in the map
             //      if (!gen->m_vars.contains(expr_ident->ident.value.value()))
             //      {
-            //          std::cerr << "Identifier " << expr_ident->ident.value.value() << " does not exist" << std::endl;
+            //          std::err << "Identifier " << expr_ident->ident.value.value() << " does not exist" << std::end;
             //          exit(EXIT_FAILURE);
             //      }
 
             //     const auto &var = gen->m_vars.at(expr_ident->ident.value.value());
-            //     std::stringstream offset;
+            //     std::string stream offset;
             //     offset << "QWORD [rsp + " << (gen->m_stack_size - var.stack_loc - 1) * 8 << "]\n";
             //     gen->push(offset.str());
             // }
@@ -201,7 +201,7 @@ public:
         std::visit(visitor, stmt->var);
     }
 
-    // Main Proggram generation template
+    // Main Program generation template
     [[nodiscard]] std::string
     gen_prog()
     {

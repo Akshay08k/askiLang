@@ -21,7 +21,7 @@ enum class TokenType
     if_
 };
 
-std::optional<int> binExpr_prec(TokenType type)
+inline std::optional<int> binExpr_prec(TokenType type)
 {
     switch (type)
     {
@@ -35,11 +35,13 @@ std::optional<int> binExpr_prec(TokenType type)
         return {};
     }
 }
+
 struct Token
 {
     TokenType type;
     std::optional<std::string> value{};
 };
+
 class Tokenizer
 {
 public:
@@ -81,7 +83,7 @@ public:
                     tokens.push_back({.type = TokenType::if_});
                     buf.clear();
                 }
-                // ident can be any so dont want to apply if else
+                // ident can be any so don't want to apply if else
                 else
                 {
                     tokens.push_back({.type = TokenType::ident, .value = buf});
